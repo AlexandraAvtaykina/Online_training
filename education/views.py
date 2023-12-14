@@ -1,0 +1,73 @@
+from rest_framework.generics import ListAPIView, RetrieveAPIView, CreateAPIView, UpdateAPIView, DestroyAPIView
+from rest_framework import viewsets
+
+from education.models import Course, Lesson
+from education.permissions import IsAutor, IsManager
+from education.serializers import CourseSerializer, LessonSerializer, CourseCreateSerializer
+
+
+class CourseViewSet(viewsets.ModelViewSet):
+    """ Простой ViewSet-класс для вывода информации """
+    serializer_class = CourseSerializer
+    queryset = Course.objects.all()
+
+    """ Функция привязывает автора к его курсу"""
+    def create(self, request, *args, **kwargs):
+        self.serializer_class = CourseCreateSerializer
+        new_course = super().create(request, *args, **kwargs)
+        new_course.author = self.request.user
+        new_course.save()
+        return new_course
+
+    """ Если юзер не модератор, функция показывает только его курсы"""
+    def get_queryset(self):
+        if not self.request.user.is_staff:
+            return Course.objects.filter(autor=self.request.user)
+        elif self.request.user.is_staff:
+            return Course.objects.all()
+
+
+class LessonListAPIView(ListAPIView):
+    """ Отвечает за отображение списка сущностей (Generic-класс)"""
+
+    serializer_class = LessonSerializer
+    queryset = Lesson.objects.all()
+    permission_classes = [IsAutor]
+
+
+class LessonRetrieveAPIView(RetrieveAPIView):
+    """ Отвечает за отображение одной сущности (Generic-класс)"""
+
+    serializer_class = LessonSerializer
+    queryset = Lesson.objects.all()
+    permission_classes = [IsManager | IsAutor]
+
+
+class LessonCreateAPIView(CreateAPIView):
+    """ Отвечает за создание сущности (Generic-класс)"""
+
+    serializer_class = LessonSerializer
+    queryset = Lesson.objects.all()
+    permission_classes = [IsManager]
+
+    """ Функция привязывает автора к его уроку"""
+    def perform_create(self, serializer):
+        new_lesson = serializer.save()
+        new_lesson.author = self.request.user
+        new_lesson.save()
+
+
+class LessonUpdateAPIView(UpdateAPIView):
+    """ Отвечает за редактирование сущности (Generic-класс)"""
+
+    serializer_class = LessonSerializer
+    queryset = Lesson.objects.all()
+    permission_classes = [IsAutor]
+
+
+class LessonDestroyAPIView(DestroyAPIView):
+    """ Отвечает за удаление сущности (Generic-класс)"""
+
+    serializer_class = LessonSerializer
+    queryset = Lesson.objects.all()
+    permission_classes = [IsManager]
