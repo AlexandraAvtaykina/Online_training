@@ -1,22 +1,24 @@
 from rest_framework.generics import ListAPIView, RetrieveAPIView, CreateAPIView, UpdateAPIView, DestroyAPIView
 from rest_framework import viewsets
 
-from education.models import Course, Lesson
+from education.models import Course, Lesson, Subscription
+from education.paginations import LessonPaginator
 from education.permissions import IsAutor, IsManager
-from education.serializers import CourseSerializer, LessonSerializer, CourseCreateSerializer
+from education.serializers import CourseSerializer, LessonSerializer, CourseCreateSerializer, SubscriptionSerializer
 
 
 class CourseViewSet(viewsets.ModelViewSet):
     """ Простой ViewSet-класс для вывода информации """
     serializer_class = CourseSerializer
     queryset = Course.objects.all()
+    pagination_class = LessonPaginator
 
     """ Функция привязывает автора к его курсу"""
     def create(self, request, *args, **kwargs):
         self.serializer_class = CourseCreateSerializer
         new_course = super().create(request, *args, **kwargs)
         new_course.author = self.request.user
-        new_course.save()
+        # new_course.save()
         return new_course
 
     """ Если юзер не модератор, функция показывает только его курсы"""
@@ -32,7 +34,8 @@ class LessonListAPIView(ListAPIView):
 
     serializer_class = LessonSerializer
     queryset = Lesson.objects.all()
-    permission_classes = [IsAutor]
+    permission_classes = [IsManager | IsAutor]
+    pagination_class = LessonPaginator
 
 
 class LessonRetrieveAPIView(RetrieveAPIView):
@@ -48,7 +51,7 @@ class LessonCreateAPIView(CreateAPIView):
 
     serializer_class = LessonSerializer
     queryset = Lesson.objects.all()
-    permission_classes = [IsManager]
+    permission_classes = [IsManager | IsAutor]
 
     """ Функция привязывает автора к его уроку"""
     def perform_create(self, serializer):
@@ -71,3 +74,22 @@ class LessonDestroyAPIView(DestroyAPIView):
     serializer_class = LessonSerializer
     queryset = Lesson.objects.all()
     permission_classes = [IsManager]
+
+
+class SubscriptionCreateAPIView(CreateAPIView):
+    """ Отвечает за создание сущности (Generic-класс) Подписка"""
+
+    serializer_class = SubscriptionSerializer
+    queryset = Subscription.objects.all()
+    permission_classes = [IsManager | IsAutor]
+
+    def perform_create(self, serializer):
+        serializer.save()
+        self.request.user.subscription_set.add(serializer.instance)
+
+
+class SubscriptionDestroyAPIView(DestroyAPIView):
+    """ Отвечает за удаление сущности (Generic-класс) Подписка"""
+
+    queryset = Subscription.objects.all()
+    permission_classes = [IsManager | IsAutor]

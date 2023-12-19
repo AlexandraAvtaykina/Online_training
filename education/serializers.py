@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
-from education.models import Course, Lesson
+from education.models import Course, Lesson, Subscription
+from education.validators import UrlValidator
 
 
 class LessonCourseSerializer(serializers.ModelSerializer):
@@ -22,8 +23,8 @@ class CourseCreateSerializer(serializers.ModelSerializer):
 class CourseSerializer(serializers.ModelSerializer):
     """ Сериализатор модели Course"""
 
-    lesson_count = serializers.SerializerMethodField()  # поле вывода количества уроков
-    lessons = LessonCourseSerializer(source='lesson_set', many=True)  # поле вывода уроков
+    lesson_count = serializers.SerializerMethodField(read_only=True)  # поле вывода количества уроков
+    lessons = LessonCourseSerializer(source='lesson_set', many=True, read_only=True)  # поле вывода уроков
 
     def get_lesson_count(self, instance):
         """ Метод вывода количества уроков """
@@ -40,3 +41,12 @@ class LessonSerializer(serializers.ModelSerializer):
     class Meta:
         model = Lesson
         fields = '__all__'  # Выводить все поля
+        validators = [UrlValidator(field='url_lesson')]
+
+
+class SubscriptionSerializer:
+    """ Сериализатор модели подписки"""
+
+    class Meta:
+        model = Subscription
+        fields = 'course_subscription'
