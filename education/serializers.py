@@ -9,7 +9,7 @@ class LessonCourseSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Lesson
-        fields = ('pk', 'title_course',)
+        fields = ('pk', 'title_lesson',)
 
 
 class CourseCreateSerializer(serializers.ModelSerializer):
@@ -23,8 +23,8 @@ class CourseCreateSerializer(serializers.ModelSerializer):
 class CourseSerializer(serializers.ModelSerializer):
     """ Сериализатор модели Course"""
 
-    lesson_count = serializers.SerializerMethodField(read_only=True)  # поле вывода количества уроков
-    lessons = LessonCourseSerializer(source='lesson_set', many=True, read_only=True)  # поле вывода уроков
+    lesson_count = serializers.IntegerField(source='lesson_set.all.count', read_only=True)  # поле вывода количества уроков
+    lessons = LessonCourseSerializer(source='lesson_set', many=True)  # поле вывода уроков
 
     def get_lesson_count(self, instance):
         """ Метод вывода количества уроков """
@@ -32,7 +32,8 @@ class CourseSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Course
-        fields = ('pk', 'title_course', 'image_course', 'description_course', 'lesson_count', 'lessons')
+        fields = ('pk', 'title_course', 'image_course', 'description_course', 'lesson_count', 'lessons',
+                  'subscription_course',)
 
 
 class LessonSerializer(serializers.ModelSerializer):
