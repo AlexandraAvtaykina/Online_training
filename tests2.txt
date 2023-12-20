@@ -16,7 +16,7 @@ education/models.py                                           28      2    93%
 education/paginations.py                                       3      0   100%
 education/permissions.py                                       7      0   100%
 education/serializers.py                                      28      1    96%
-education/tests.py                                            46      0   100%
+education/tests.py                                            67     29    57%
 education/urls.py                                              8      0   100%
 education/validators.py                                        9      1    89%
 education/views.py                                            58     10    83%
@@ -53,4 +53,4 @@ users/tests.py                                                 1      0   100%
 users/urls.py                                                  6      0   100%
 users/views.py                                                 6      0   100%
 ------------------------------------------------------------------------------
-TOTAL                                                        401     55    86%
+TOTAL                                                        422     84    80%

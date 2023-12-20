@@ -1,2 +1,2 @@
-Found 5 test(s).
+Found 7 test(s).
 System check identified no issues (0 silenced).

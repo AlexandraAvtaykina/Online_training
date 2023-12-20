@@ -44,9 +44,9 @@ class LessonSerializer(serializers.ModelSerializer):
         validators = [UrlValidator(field='url_lesson')]
 
 
-class SubscriptionSerializer:
+class SubscriptionSerializer(serializers.ModelSerializer):
     """ Сериализатор модели подписки"""
 
     class Meta:
         model = Subscription
-        fields = 'course_subscription'
+        fields = ('course_subscription',)

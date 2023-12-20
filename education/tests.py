@@ -2,12 +2,13 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from education.models import Course, Lesson
+from education.models import Course, Lesson, Subscription
 from users.models import User
 
 
 class LessonApiTestCase(APITestCase):
     """ Тесты на CRUD урока"""
+
     def setUp(self) -> None:
         user = User.objects.create(email='test@test.test', is_active=True)
         user.set_password('test_password')
@@ -168,3 +169,62 @@ class LessonApiTestCase(APITestCase):
             status.HTTP_204_NO_CONTENT
         )
 
+
+class SubscriptionTestCase(APITestCase):
+    """ Тесты на создание и удаление подписки"""
+
+    def setUp(self) -> None:
+        user = User.objects.create(email='test@test.test', is_active=True)
+        user.set_password('test_password')
+        user.save()
+        response = self.client.post(
+            '/users/api/token/', data={"email": "test@test.test", "password": "test_password"})
+        self.token = response.json()["access"]
+
+        self.user = user
+
+    def test_create_subscription(self):
+        """Тестирование создания подписки"""
+        heard = {
+            "Authorization": f"Bearer {self.token}"
+        }
+        course = Course.objects.create(
+            title_course='Тестовый курс',
+            description_course='Тест',
+        )
+        data = {
+            'course_subscription': course.id,
+        }
+        response = self.client.post(
+            '/education/subscription_create/',
+            data=data,
+            headers=heard
+        )
+
+        self.assertEqual(
+            response.status_code,
+            status.HTTP_201_CREATED
+        )
+
+    def test_delete_subscription(self):
+        """Тестирование удаления подписки"""
+        heard = {
+            "Authorization": f"Bearer {self.token}"
+        }
+        course = Course.objects.create(
+            title_course='Тестовый курс',
+            description_course='Тест',
+        )
+        subscription = Subscription.objects.create(
+            user=self.user,
+            course_subscription=course
+        )
+        response = self.client.delete(
+            f'/education/subscription_destroy/{subscription.id}/',
+            headers=heard
+        )
+
+        self.assertEqual(
+            response.status_code,
+            status.HTTP_204_NO_CONTENT
+        )
