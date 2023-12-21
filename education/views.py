@@ -18,7 +18,7 @@ class CourseViewSet(viewsets.ModelViewSet):
         self.serializer_class = CourseCreateSerializer
         new_course = super().create(request, *args, **kwargs)
         new_course.author = self.request.user
-        # new_course.save()
+        new_course.save()
         return new_course
 
     """ Если юзер не модератор, функция показывает только его курсы"""
@@ -83,6 +83,7 @@ class SubscriptionCreateAPIView(CreateAPIView):
     queryset = Subscription.objects.all()
     permission_classes = [IsManager | IsAutor]
 
+    """ Функция ставит True, если пользователь подписался на курс"""
     def perform_create(self, serializer):
         serializer.save()
         self.request.user.subscription_set.add(serializer.instance)

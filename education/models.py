@@ -41,3 +41,9 @@ class Subscription(models.Model):
     user = models.ForeignKey(User, verbose_name='пользователь', on_delete=models.CASCADE, **NULLABLE)
     course_subscription = models.ForeignKey(Course, verbose_name='курс в подписке', on_delete=models.CASCADE)
 
+    def __str__(self):
+        return f'{self.user} - {self.course_subscription}'
+
+    class Meta:
+        verbose_name = 'Подписка'
+        verbose_name_plural = 'Подписки'
