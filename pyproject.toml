@@ -15,6 +15,7 @@ ipython = "^8.18.1"
 djangorestframework = "^3.14.0"
 djangorestframework-simplejwt = "^5.3.1"
 coverage = "^7.3.3"
+drf-yasg = "^1.21.7"
 
 
 [build-system]

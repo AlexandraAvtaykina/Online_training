@@ -14,12 +14,10 @@ class CourseViewSet(viewsets.ModelViewSet):
     pagination_class = LessonPaginator
 
     """ Функция привязывает автора к его курсу"""
-    def create(self, request, *args, **kwargs):
-        self.serializer_class = CourseCreateSerializer
-        new_course = super().create(request, *args, **kwargs)
-        new_course.author = self.request.user
-        new_course.save()
-        return new_course
+    def perform_create(self, serializer):
+        # привязка создателя к курсу
+        serializer.save()
+        self.request.user.course_set.add(serializer.instance)
 
     """ Если юзер не модератор, функция показывает только его курсы"""
     def get_queryset(self):

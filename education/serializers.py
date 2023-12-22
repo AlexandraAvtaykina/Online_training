@@ -32,7 +32,7 @@ class CourseSerializer(serializers.ModelSerializer):
     """ Сериализатор модели Course"""
 
     lesson_count = serializers.IntegerField(source='lesson_set.all.count', read_only=True)  # поле вывода количества уроков
-    lessons = LessonCourseSerializer(source='lesson_set', many=True)  # поле вывода уроков
+    lessons = LessonCourseSerializer(source='lesson_set', read_only=True, many=True)  # поле вывода уроков
     course_subscription = serializers.SerializerMethodField()
 
     def get_course_subscription(self, obj):
