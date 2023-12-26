@@ -2,7 +2,6 @@ from rest_framework import serializers
 
 from education.models import Course, Lesson, Subscription
 from education.validators import UrlValidator
-from payment.services import get_url
 
 
 class SubscriptionSerializer(serializers.ModelSerializer):
@@ -35,11 +34,6 @@ class CourseSerializer(serializers.ModelSerializer):
     lesson_count = serializers.IntegerField(source='lesson_set.all.count', read_only=True)  # поле вывода количества уроков
     lessons = LessonCourseSerializer(source='lesson_set', read_only=True, many=True)  # поле вывода уроков
     course_subscription = serializers.SerializerMethodField()  # поле подписки на курс
-    url_payment = serializers.SerializerMethodField()  # поле ссылки на оплату
-
-    def get_url_payment(self, obj):
-        """ Метод вывода ссылки на оплату курса """
-        return get_url(obj)
 
     def get_course_subscription(self, obj):
         """ Метод вывода подписан ли пользователь на курс """
@@ -52,7 +46,7 @@ class CourseSerializer(serializers.ModelSerializer):
     class Meta:
         model = Course
         fields = ('pk', 'title_course', 'image_course', 'description_course', 'lesson_count', 'lessons',
-                  'course_subscription', 'url_payment',)
+                  'course_subscription',)
 
 
 class LessonSerializer(serializers.ModelSerializer):
