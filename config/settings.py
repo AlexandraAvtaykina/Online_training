@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 from pathlib import Path
+import stripe
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -141,7 +142,7 @@ REST_FRAMEWORK = {
     ]
 }
 
-API_KEY_STRIPE = 'pk_test_51OPrL0FA8bwzNlKAxdyYlQO44vSc01OmIRTqdTcHD8Clo1j1VKRYlmBL5aahAw93XqR68PqaiL0h3fLt0xrRv5pt001BNGBonL'
+stripe.api_key = 'sk_test_51OPrL0FA8bwzNlKAccboalFsU9PMecDMNqw0AmTAGCSkgKlXbZF3ssokVNU71gSutkFYzjcamxD5X1s3dlSWTjOe00CRoKBFAa'
 
 CORS_ALLOWED_ORIGINS = [
     "https://read-only.example.com",
@@ -156,7 +157,7 @@ CORS_ALLOW_ALL_ORIGINS = False
 # Настройки для Celery
 
 # URL-адрес брокера сообщений
-CELERY_BROKER_URL = 'redis://localhost:6379' # Например, Redis, который по умолчанию работает на порту 6379
+CELERY_BROKER_URL = 'redis://localhost:6379'  # Например, Redis, который по умолчанию работает на порту 6379
 
 # URL-адрес брокера результатов, также Redis
 CELERY_RESULT_BACKEND = 'redis://localhost:6379'
