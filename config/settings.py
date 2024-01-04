@@ -9,9 +9,8 @@ https://docs.djangoproject.com/en/5.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.0/ref/settings/
 """
-from datetime import timedelta
+
 from pathlib import Path
-import stripe
 from celery.schedules import crontab
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -144,7 +143,6 @@ REST_FRAMEWORK = {
     ]
 }
 
-stripe.api_key = 'sk_test_51OPrL0FA8bwzNlKAccboalFsU9PMecDMNqw0AmTAGCSkgKlXbZF3ssokVNU71gSutkFYzjcamxD5X1s3dlSWTjOe00CRoKBFAa'
 
 CORS_ALLOWED_ORIGINS = [
     "https://read-only.example.com",
